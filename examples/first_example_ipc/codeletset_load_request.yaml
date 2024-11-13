@@ -1,0 +1,21 @@
+codelet_descriptor:
+  - codelet_name: example_codelet
+    codelet_path: ${JBPFP_PATH}/examples/first_example_ipc/example_codelet.o
+    hook_name: example
+    in_io_channel:
+      - name: inmap
+        stream_id: "11111111111111111111111111111111"
+        serde:
+          file_path: ${JBPFP_PATH}/examples/first_example_ipc/schema:manual_ctrl_event_serializer.so
+          protobuf:
+            package_path: ${JBPFP_PATH}/examples/first_example_ipc/schema.pb
+            msg_name: manual_ctrl_event
+    out_io_channel:
+      - name: outmap
+        stream_id: 00112233445566778899AABBCCDDEEFF
+        serde:
+          file_path: ${JBPFP_PATH}/examples/first_example_ipc/schema:packet_serializer.so
+          protobuf:
+            package_path: ${JBPFP_PATH}/examples/first_example_ipc/schema.pb
+            msg_name: packet
+codeletset_id: example_codeletset

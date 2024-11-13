@@ -1,0 +1,31 @@
+syntax = "proto2";
+
+message obj {
+    required bool bval = 1;
+    required bytes bytesval = 2;
+    required double dval = 3;
+    required fixed32 f32val = 4;
+    required fixed64 f64val = 5;
+    required int32 i32val = 6;
+    required int64 i64val = 7;
+    required sfixed32 sf32val = 8;
+    required sfixed64 sf64val = 9;
+    required sint32 si32val = 10;
+    required sint64 si64val = 11;
+    required string sval = 12;
+    required uint32 ui32val = 13;
+    required uint64 ui64val = 14;
+
+    repeated bool barr = 15;
+    repeated double darr = 16;
+    repeated fixed32 f32arr = 17;
+    repeated fixed64 f64arr = 18;
+    repeated int32 i32arr = 19;
+    repeated int64 i64arr = 20;
+    repeated sfixed32 sf32arr = 21;
+    repeated sfixed64 sf64arr = 22;
+    repeated sint32 si32arr = 23;
+    repeated sint64 si64arr = 24;
+    repeated uint32 ui32arr = 25;
+    repeated uint64 ui64arr = 26;
+}

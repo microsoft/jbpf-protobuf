@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+message item {
+    required string name = 1;
+    optional uint32 val = 2;
+}
