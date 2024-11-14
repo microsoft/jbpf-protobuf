@@ -26,9 +26,9 @@ type Client struct {
 }
 
 // NewClient creates a new Client
-func NewClient(ctx context.Context, logger *logrus.Logger, opts *ClientOptions) (*Client, error) {
+func NewClient(ctx context.Context, logger *logrus.Logger, opts *Options) (*Client, error) {
 	return &Client{
-		baseURL: fmt.Sprintf("%s://%s:%d", controlScheme, opts.control.ip, opts.control.port),
+		baseURL: fmt.Sprintf("%s://%s:%d", controlScheme, opts.ip, opts.port),
 		ctx:     ctx,
 		inner:   &http.Client{},
 		logger:  logger,

@@ -95,7 +95,7 @@ INFO[0010] {"seqNo":7, "value":-7, "name":"instance 7"}  streamUUID=00112233-445
 
 To send a manual control message to the `example_app`, we run the command:
 ```sh
-$ ./send_control.sh 101
+$ ./send_input_msg.sh 101
 ```
 
 This should trigger a message in the `example_app`:

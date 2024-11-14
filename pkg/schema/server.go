@@ -7,11 +7,9 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
-	"jbpf_protobuf_cli/jbpf"
 	"path/filepath"
 	"strings"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/descriptorpb"
 
@@ -21,32 +19,20 @@ import (
 
 // Server is a server that implements the DynamicDecoderServer interface
 type Server struct {
-	ctx        context.Context
-	jbpfClient *jbpf.Client
-	logger     *logrus.Logger
-	opts       *ServerOptions
-	store      *Store
+	ctx    context.Context
+	logger *logrus.Logger
+	opts   *Options
+	store  *Store
 }
 
 // NewServer returns a new Server
-func NewServer(ctx context.Context, logger *logrus.Logger, opts *ServerOptions, store *Store) (*Server, error) {
-	var jbpfClient *jbpf.Client
-	var err error
-
-	if opts.jbpf.Enable {
-		jbpfClient, err = jbpf.NewClient(logger, opts.jbpf)
-		if err != nil {
-			return nil, err
-		}
-	}
-
+func NewServer(ctx context.Context, logger *logrus.Logger, opts *Options, store *Store) *Server {
 	return &Server{
-		ctx:        ctx,
-		jbpfClient: jbpfClient,
-		logger:     logger,
-		opts:       opts,
-		store:      store,
-	}, nil
+		ctx:    ctx,
+		logger: logger,
+		opts:   opts,
+		store:  store,
+	}
 }
 
 // Serve starts the server
@@ -125,37 +111,6 @@ func (s *Server) AddStreamToSchemaAssociation(_ context.Context, req *AddSchemaA
 	}
 
 	l.Info("association added")
-
-	return nil
-}
-
-// SendControl sends data to the jbpf agent
-func (s *Server) SendControl(_ context.Context, req *SendControlRequest) error {
-	msg, err := s.store.GetProtoMsgInstance(req.StreamUUID)
-	if err != nil {
-		s.logger.WithError(err).Errorf("error creating instance of proto message %s", req.StreamUUID.String())
-		return err
-	}
-
-	err = protojson.Unmarshal([]byte(req.Payload), msg)
-	if err != nil {
-		s.logger.WithError(err).Error("error unmarshalling payload")
-		return err
-	}
-
-	s.logger.WithFields(logrus.Fields{
-		"msg": fmt.Sprintf("%T - \"%v\"", msg, msg),
-	}).Info("sending msg")
-
-	payload, err := proto.Marshal(msg)
-	if err != nil {
-		return err
-	}
-
-	out := append(req.StreamUUID[:], payload...)
-	if err := s.jbpfClient.Write(out); err != nil {
-		return err
-	}
 
 	return nil
 }

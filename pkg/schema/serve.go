@@ -87,30 +87,8 @@ func (s *Server) serveHTTP(ctx context.Context) error {
 		}
 	})
 
-	if s.opts.jbpf.Enable {
-		http.HandleFunc("/control", func(w http.ResponseWriter, r *http.Request) {
-			switch r.Method {
-			case http.MethodPost:
-				body, err := readBodyAs[SendControlRequest](r)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-				if err := s.SendControl(r.Context(), &body); err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				} else {
-					w.WriteHeader(http.StatusOK)
-				}
-
-			default:
-				w.WriteHeader(http.StatusMethodNotAllowed)
-			}
-		})
-	}
-
 	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", s.opts.control.ip, s.opts.control.port),
+		Addr:    fmt.Sprintf("%s:%d", s.opts.ip, s.opts.port),
 		Handler: nil,
 	}
 

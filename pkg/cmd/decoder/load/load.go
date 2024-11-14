@@ -13,12 +13,12 @@ import (
 )
 
 type runOptions struct {
-	schema  *schema.ClientOptions
-	general *common.GeneralOptions
+	decoderAPI *schema.Options
+	general    *common.GeneralOptions
 
 	compiledProtos map[string]*common.File
 	configFiles    []string
-	configs        []DecoderLoadConfig
+	configs        []common.CodeletsetConfig
 }
 
 func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
@@ -26,7 +26,7 @@ func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 }
 
 func (o *runOptions) parse() error {
-	configs, compiledProtos, err := fromFiles(o.configFiles...)
+	configs, compiledProtos, err := common.CodeletsetConfigFromFiles(o.configFiles...)
 	if err != nil {
 		return err
 	}
@@ -39,8 +39,8 @@ func (o *runOptions) parse() error {
 // Command Load a schema to a local decoder
 func Command(opts *common.GeneralOptions) *cobra.Command {
 	runOptions := &runOptions{
-		schema:  &schema.ClientOptions{},
-		general: opts,
+		decoderAPI: &schema.Options{},
+		general:    opts,
 	}
 	cmd := &cobra.Command{
 		Use:   "load",
@@ -52,14 +52,14 @@ func Command(opts *common.GeneralOptions) *cobra.Command {
 		SilenceUsage: true,
 	}
 	addToFlags(cmd.PersistentFlags(), runOptions)
-	schema.AddClientOptionsToFlags(cmd.PersistentFlags(), runOptions.schema)
+	schema.AddOptionsToFlags(cmd.PersistentFlags(), runOptions.decoderAPI)
 	return cmd
 }
 
 func run(cmd *cobra.Command, opts *runOptions) error {
 	if err := errors.Join(
 		opts.general.Parse(),
-		opts.schema.Parse(),
+		opts.decoderAPI.Parse(),
 		opts.parse(),
 	); err != nil {
 		return err
@@ -67,7 +67,7 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 
 	logger := opts.general.Logger
 
-	client, err := schema.NewClient(cmd.Context(), logger, opts.schema)
+	client, err := schema.NewClient(cmd.Context(), logger, opts.decoderAPI)
 	if err != nil {
 		return err
 	}
@@ -76,28 +76,15 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 
 	for _, config := range opts.configs {
 		for _, desc := range config.CodeletDescriptor {
-			for _, io := range desc.InIOChannel {
-				if existing, ok := schemas[io.Serde.Protobuf.protoPackageName]; ok {
-					existing.Streams[io.streamUUID] = io.Serde.Protobuf.MsgName
-				} else {
-					compiledProto := opts.compiledProtos[io.Serde.Protobuf.absPackagePath]
-					schemas[io.Serde.Protobuf.protoPackageName] = &schema.LoadRequest{
-						CompiledProto: compiledProto.Data,
-						Streams: map[uuid.UUID]string{
-							io.streamUUID: io.Serde.Protobuf.MsgName,
-						},
-					}
-				}
-			}
 			for _, io := range desc.OutIOChannel {
-				if existing, ok := schemas[io.Serde.Protobuf.protoPackageName]; ok {
-					existing.Streams[io.streamUUID] = io.Serde.Protobuf.MsgName
+				if existing, ok := schemas[io.Serde.Protobuf.ProtoPackageName]; ok {
+					existing.Streams[io.StreamUUID] = io.Serde.Protobuf.MsgName
 				} else {
-					compiledProto := opts.compiledProtos[io.Serde.Protobuf.absPackagePath]
-					schemas[io.Serde.Protobuf.protoPackageName] = &schema.LoadRequest{
+					compiledProto := opts.compiledProtos[io.Serde.Protobuf.AbsPackagePath]
+					schemas[io.Serde.Protobuf.ProtoPackageName] = &schema.LoadRequest{
 						CompiledProto: compiledProto.Data,
 						Streams: map[uuid.UUID]string{
-							io.streamUUID: io.Serde.Protobuf.MsgName,
+							io.StreamUUID: io.Serde.Protobuf.MsgName,
 						},
 					}
 				}

@@ -19,7 +19,6 @@ const (
 
 // Options is the options for the jbpf client
 type Options struct {
-	Enable          bool
 	ip              string
 	keepAlivePeriod time.Duration
 	port            uint16
@@ -31,7 +30,6 @@ func AddOptionsToFlags(flags *pflag.FlagSet, opts *Options) {
 		return
 	}
 
-	flags.BoolVar(&opts.Enable, "jbpf-enable", false, "whether to allow sending control messages to the jbpf TCP server")
 	flags.DurationVar(&opts.keepAlivePeriod, optionsPrefix+"-keep-alive", 0, "time to keep alive the connection")
 	flags.StringVar(&opts.ip, optionsPrefix+"-ip", defaultIP, "IP address of the jbpf TCP server")
 	flags.Uint16Var(&opts.port, optionsPrefix+"-port", defaultPort, "port address of the jbpf TCP server")
@@ -39,9 +37,6 @@ func AddOptionsToFlags(flags *pflag.FlagSet, opts *Options) {
 
 // Parse parses the options
 func (o *Options) Parse() error {
-	if !o.Enable {
-		return nil
-	}
 	_, err := url.ParseRequestURI(fmt.Sprintf("%s://%s:%d", scheme, o.ip, o.port))
 	if err != nil {
 		return err

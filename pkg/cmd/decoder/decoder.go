@@ -3,7 +3,6 @@
 package decoder
 
 import (
-	"jbpf_protobuf_cli/cmd/decoder/control"
 	"jbpf_protobuf_cli/cmd/decoder/load"
 	"jbpf_protobuf_cli/cmd/decoder/run"
 	"jbpf_protobuf_cli/cmd/decoder/unload"
@@ -20,7 +19,6 @@ func Command(opts *common.GeneralOptions) *cobra.Command {
 		Short: "Execute a decoder subcommand",
 	}
 	cmd.AddCommand(
-		control.Command(opts),
 		load.Command(opts),
 		unload.Command(opts),
 		run.Command(opts),

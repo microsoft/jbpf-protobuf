@@ -1,5 +1,7 @@
 # jbpf-protobuf
 
+**NOTE: This project uses an experimental feature from jbpf. It is not meant to be used in production environments.**
+
 This repository is a extension for [jbpf](https://github.com/microsoft/jbpf/) demonstrating how to utilize protobuf serialization as part of jbpf.
 
 Prerequisites:
@@ -7,7 +9,7 @@ Prerequisites:
 * Go v1.23.2+
 * Make
 * Pip
-* Python
+* Python3
 
 The project utilizes [Nanopb](https://github.com/nanopb/nanopb) to generate C structures for given protobuf specs that use contiguous memory. It also generates serializer libraries that can be provided to jbpf, to encode output and decode input data to seamlessly integrate external data processing systems.
 
@@ -34,7 +36,7 @@ docker build -t jbpf_protobuf_builder:latest -f deploy/Dockerfile .
 
 ## Running the examples
 
-In order to run any of the samples, you'll need to build Janus.
+In order to run any of the samples, you'll need to build jbpf.
 
 ```sh
 mkdir -p jbpf/build
