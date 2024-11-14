@@ -4,6 +4,7 @@
 
 For complete details of each subcommand, see `./jbpf_protobuf_cli {SUBCOMMAND} --help`.
 
+![architecture](./jbpf_arch.png)
 
 ## Serde
 

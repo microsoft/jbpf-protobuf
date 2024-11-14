@@ -43,50 +43,20 @@ func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 	flags.StringVarP(&opts.inlineJSON, "inline-json", "j", "", "inline payload in JSON format")
 }
 
-func (o *runOptions) parse() error {
-	if (len(o.inlineJSON) > 0 && len(o.filePath) > 0) || (len(o.inlineJSON) == 0 && len(o.filePath) == 0) {
-		return errors.New("exactly one of --file or --inline-json can be specified")
+func (o *runOptions) parse() (err error) {
+	o.payload, err = loadInlineJSONOrFromFile(o.inlineJSON, o.filePath)
+	if err != nil {
+		return err
 	}
 
-	if len(o.filePath) != 0 {
-		if fi, err := os.Stat(o.filePath); err != nil {
-			return err
-		} else if fi.IsDir() {
-			return fmt.Errorf(`expected "%s" to be a file, got a directory`, o.filePath)
-		}
-		payload, err := os.ReadFile(o.filePath)
-		if err != nil {
-			return err
-		}
-		var deserializedPayload interface{}
-		err = json.Unmarshal(payload, &deserializedPayload)
-		if err != nil {
-			return err
-		}
-		o.payload = string(payload)
-	} else {
-		var deserializedPayload interface{}
-		err := json.Unmarshal([]byte(o.inlineJSON), &deserializedPayload)
-		if err != nil {
-			return err
-		}
-		o.payload = o.inlineJSON
-	}
-
-	var err error
 	o.streamUUID, err = uuid.Parse(o.streamID)
 	if err != nil {
 		return err
 	}
 
-	configs, compiledProtos, err := common.CodeletsetConfigFromFiles(o.configFiles...)
-	if err != nil {
-		return err
-	}
-	o.configs = configs
-	o.compiledProtos = compiledProtos
+	o.configs, o.compiledProtos, err = common.CodeletsetConfigFromFiles(o.configFiles...)
 
-	return nil
+	return err
 }
 
 // Command Load a schema to a local decoder
@@ -148,6 +118,37 @@ func run(_ *cobra.Command, opts *runOptions) error {
 	out := append(opts.streamUUID[:], payload...)
 
 	return client.Write(out)
+}
+
+func loadInlineJSONOrFromFile(inlineJSON, filePath string) (string, error) {
+	if (len(inlineJSON) > 0 && len(filePath) > 0) || (len(inlineJSON) == 0 && len(filePath) == 0) {
+		return "", errors.New("exactly one of --file or --inline-json can be specified")
+	}
+
+	if len(filePath) != 0 {
+		if fi, err := os.Stat(filePath); err != nil {
+			return "", err
+		} else if fi.IsDir() {
+			return "", fmt.Errorf(`expected "%s" to be a file, got a directory`, filePath)
+		}
+		payload, err := os.ReadFile(filePath)
+		if err != nil {
+			return "", err
+		}
+		var deserializedPayload interface{}
+		err = json.Unmarshal(payload, &deserializedPayload)
+		if err != nil {
+			return "", err
+		}
+		return string(payload), nil
+	}
+
+	var deserializedPayload interface{}
+	err := json.Unmarshal([]byte(inlineJSON), &deserializedPayload)
+	if err != nil {
+		return "", err
+	}
+	return inlineJSON, nil
 }
 
 func getMessageInstance(configs []common.CodeletsetConfig, compiledProtos map[string]*common.File, streamUUID uuid.UUID) (*dynamicpb.Message, error) {
