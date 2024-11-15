@@ -1,0 +1,6 @@
+[submodule "jbpf"]
+	path = jbpf
+	url = https://github.com/microsoft/jbpf.git
+[submodule "3p/nanopb"]
+	path = 3p/nanopb
+	url = https://github.com/nanopb/nanopb.git

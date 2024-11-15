@@ -1,0 +1,3 @@
+request.name				max_size:32
+response.msg				max_size:100
+status.status				max_size:100

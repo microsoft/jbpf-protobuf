@@ -1,0 +1,14 @@
+obj.bytesval max_size:20
+obj.sval max_size:20
+obj.barr max_count:10
+obj.darr max_count:10
+obj.f32arr max_count:10
+obj.f64arr max_count:10
+obj.i32arr max_count:10
+obj.i64arr max_count:10
+obj.sf32arr max_count:10
+obj.sf64arr max_count:10
+obj.si32arr max_count:10
+obj.si64arr max_count:10
+obj.ui32arr max_count:10
+obj.ui64arr max_count:10

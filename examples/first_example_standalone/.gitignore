@@ -1,0 +1,6 @@
+*.pb
+*.pb.c
+*.pb.h
+*.so
+example_app
+example_codelet.o

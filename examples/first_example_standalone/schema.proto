@@ -1,0 +1,9 @@
+syntax = "proto2";
+
+message packet {
+  required int32 seq_no = 1;
+  required int32 value = 2;
+  required string name = 3;
+}
+
+message manual_ctrl_event { required int32 value = 1; }
