@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -64,53 +65,39 @@ func (s *Server) serveHTTP(ctx context.Context) error {
 			}
 
 		case http.MethodDelete:
-			streamUUIDStr := r.URL.Query().Get("streamUUID")
-			bs, err := base64.StdEncoding.DecodeString(streamUUIDStr)
+			streamUUIDStr := r.URL.Query().Get("stream_uuid")
+			unescapedStreamUUIDStr, err := url.PathUnescape(streamUUIDStr)
+
 			if err != nil {
+				s.logger.WithError(err).Error("failed to unescape stream_uuid")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+
+			bs, err := base64.StdEncoding.DecodeString(unescapedStreamUUIDStr)
+			if err != nil {
+				s.logger.WithError(err).Errorf("failed to decode stream_uuid from %s", unescapedStreamUUIDStr)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
 			streamUUID, err := uuid.FromBytes(bs)
 			if err != nil {
+				s.logger.WithError(err).Error("failed to parse stream id from bytes")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			if err := s.DeleteStreamToSchemaAssociation(r.Context(), streamUUID); err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			} else {
-				w.WriteHeader(http.StatusAccepted)
-			}
+
+			s.DeleteStreamToSchemaAssociation(r.Context(), streamUUID)
+			w.WriteHeader(http.StatusAccepted)
 
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
 		}
 	})
 
-	if s.opts.jbpf.Enable {
-		http.HandleFunc("/control", func(w http.ResponseWriter, r *http.Request) {
-			switch r.Method {
-			case http.MethodPost:
-				body, err := readBodyAs[SendControlRequest](r)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-				if err := s.SendControl(r.Context(), &body); err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				} else {
-					w.WriteHeader(http.StatusOK)
-				}
-
-			default:
-				w.WriteHeader(http.StatusMethodNotAllowed)
-			}
-		})
-	}
-
 	srv := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", s.opts.control.ip, s.opts.control.port),
+		Addr:    fmt.Sprintf("%s:%d", s.opts.ip, s.opts.port),
 		Handler: nil,
 	}
 

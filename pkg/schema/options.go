@@ -13,22 +13,25 @@ const (
 	// DefaultControlPort is the default used for the local decoder server
 	DefaultControlPort = uint16(20789)
 
-	controlPrefix    = "decoder-control"
+	controlPrefix    = "decoder-api"
 	controlScheme    = "http"
 	defaultControlIP = ""
 )
 
-type controlOptions struct {
+// Options for internal communication with the decoder
+type Options struct {
 	ip   string
 	port uint16
 }
 
-func addControlOptionsToFlags(flags *pflag.FlagSet, opts *controlOptions) {
-	flags.StringVar(&opts.ip, controlPrefix+"-ip", defaultControlIP, "IP address of the control HTTP server")
-	flags.Uint16Var(&opts.port, controlPrefix+"-port", DefaultControlPort, "port address of the control HTTP server")
+// AddOptionsToFlags adds the options to the provided flag set
+func AddOptionsToFlags(flags *pflag.FlagSet, opts *Options) {
+	flags.StringVar(&opts.ip, controlPrefix+"-ip", defaultControlIP, "IP address of the decoder HTTP server")
+	flags.Uint16Var(&opts.port, controlPrefix+"-port", DefaultControlPort, "port address of the decoder HTTP server")
 }
 
-func (o *controlOptions) parse() error {
+// Parse the options
+func (o *Options) Parse() error {
 	_, err := url.ParseRequestURI(fmt.Sprintf("%s://%s:%d", controlScheme, o.ip, o.port))
 	if err != nil {
 		return err

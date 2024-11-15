@@ -15,17 +15,17 @@ import (
 )
 
 type runOptions struct {
-	general *common.GeneralOptions
-	data    *data.ServerOptions
-	schema  *schema.ServerOptions
+	general    *common.GeneralOptions
+	data       *data.ServerOptions
+	decoderAPI *schema.Options
 }
 
 // Command Run decoder to collect, decode and print jbpf output
 func Command(opts *common.GeneralOptions) *cobra.Command {
 	runOptions := &runOptions{
-		general: opts,
-		data:    &data.ServerOptions{},
-		schema:  &schema.ServerOptions{},
+		general:    opts,
+		data:       &data.ServerOptions{},
+		decoderAPI: &schema.Options{},
 	}
 	cmd := &cobra.Command{
 		Use:   "run",
@@ -36,7 +36,7 @@ func Command(opts *common.GeneralOptions) *cobra.Command {
 		},
 		SilenceUsage: true,
 	}
-	schema.AddServerOptionsToFlags(cmd.PersistentFlags(), runOptions.schema)
+	schema.AddOptionsToFlags(cmd.PersistentFlags(), runOptions.decoderAPI)
 	data.AddServerOptionsToFlags(cmd.PersistentFlags(), runOptions.data)
 	return cmd
 }
@@ -45,7 +45,7 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 	if err := errors.Join(
 		opts.general.Parse(),
 		opts.data.Parse(),
-		opts.schema.Parse(),
+		opts.decoderAPI.Parse(),
 	); err != nil {
 		return err
 	}
@@ -54,10 +54,7 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 
 	store := schema.NewStore()
 
-	schemaServer, err := schema.NewServer(cmd.Context(), logger, opts.schema, store)
-	if err != nil {
-		return err
-	}
+	schemaServer := schema.NewServer(cmd.Context(), logger, opts.decoderAPI, store)
 
 	dataServer, err := data.NewServer(cmd.Context(), logger, opts.data, store)
 	if err != nil {

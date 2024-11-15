@@ -17,32 +17,27 @@ const (
 )
 
 type runOptions struct {
-	schema  *schema.ClientOptions
-	general *common.GeneralOptions
+	decoderAPI *schema.Options
+	general    *common.GeneralOptions
 
 	configFiles []string
-	configs     []DecoderUnloadConfig
+	configs     []*common.CodeletsetConfig
 }
 
 func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 	flags.StringArrayVarP(&opts.configFiles, "config", "c", []string{}, "configuration files to unload")
 }
 
-func (o *runOptions) parse() error {
-	configs, err := fromFiles(o.configFiles...)
-	if err != nil {
-		return err
-	}
-	o.configs = configs
-
-	return nil
+func (o *runOptions) parse() (err error) {
+	o.configs, err = common.CodeletsetConfigFromFiles(o.configFiles...)
+	return
 }
 
 // Command Unload a schema from a local decoder
 func Command(opts *common.GeneralOptions) *cobra.Command {
 	runOptions := &runOptions{
-		schema:  &schema.ClientOptions{},
-		general: opts,
+		decoderAPI: &schema.Options{},
+		general:    opts,
 	}
 	cmd := &cobra.Command{
 		Use:   "unload",
@@ -54,14 +49,14 @@ func Command(opts *common.GeneralOptions) *cobra.Command {
 		SilenceUsage: true,
 	}
 	addToFlags(cmd.PersistentFlags(), runOptions)
-	schema.AddClientOptionsToFlags(cmd.PersistentFlags(), runOptions.schema)
+	schema.AddOptionsToFlags(cmd.PersistentFlags(), runOptions.decoderAPI)
 	return cmd
 }
 
 func run(cmd *cobra.Command, opts *runOptions) error {
 	if err := errors.Join(
 		opts.general.Parse(),
-		opts.schema.Parse(),
+		opts.decoderAPI.Parse(),
 		opts.parse(),
 	); err != nil {
 		return err
@@ -69,7 +64,7 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 
 	logger := opts.general.Logger
 
-	client, err := schema.NewClient(cmd.Context(), logger, opts.schema)
+	client, err := schema.NewClient(cmd.Context(), logger, opts.decoderAPI)
 	if err != nil {
 		return err
 	}
@@ -78,11 +73,8 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 
 	for _, config := range opts.configs {
 		for _, desc := range config.CodeletDescriptor {
-			for _, io := range desc.InIOChannel {
-				streamUUIDs = append(streamUUIDs, io.streamUUID)
-			}
 			for _, io := range desc.OutIOChannel {
-				streamUUIDs = append(streamUUIDs, io.streamUUID)
+				streamUUIDs = append(streamUUIDs, io.StreamUUID)
 			}
 		}
 	}

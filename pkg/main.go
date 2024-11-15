@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"jbpf_protobuf_cli/cmd/decoder"
+	"jbpf_protobuf_cli/cmd/input"
 	"jbpf_protobuf_cli/cmd/serde"
 	"jbpf_protobuf_cli/common"
 	"os"
@@ -21,11 +22,12 @@ func main() {
 func cli() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  os.Args[0],
-		Long: "jbpf companion command line tool to generate protobuf assets and a local decoder to interact with a remote jbpf instance over sockets.",
+		Long: "jbpf companion command line tool to generate protobuf assets. Includes a decoder to receive output data over a UDP socket from a jbpf instance. Messages are then decoded and print as json. Also provides a mechanism to dispatch input control messages to a jbpf instance via a TCP socket.",
 	}
 	opts := common.NewGeneralOptions(cmd.PersistentFlags())
 	cmd.AddCommand(
 		decoder.Command(opts),
+		input.Command(opts),
 		serde.Command(opts),
 	)
 	return cmd
