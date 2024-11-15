@@ -116,7 +116,7 @@ func (s *Server) AddStreamToSchemaAssociation(_ context.Context, req *AddSchemaA
 }
 
 // DeleteStreamToSchemaAssociation removes the association between a stream and a schema
-func (s *Server) DeleteStreamToSchemaAssociation(_ context.Context, req uuid.UUID) error {
+func (s *Server) DeleteStreamToSchemaAssociation(_ context.Context, req uuid.UUID) {
 	l := s.logger.WithField("streamUUID", req.String())
 
 	if current, ok := s.store.streamToSchema[req]; !ok {
@@ -128,6 +128,4 @@ func (s *Server) DeleteStreamToSchemaAssociation(_ context.Context, req uuid.UUI
 			"protoPackage": current.ProtoPackage,
 		}).Info("association removed")
 	}
-
-	return nil
 }

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/google/uuid"
@@ -27,8 +28,13 @@ type Client struct {
 
 // NewClient creates a new Client
 func NewClient(ctx context.Context, logger *logrus.Logger, opts *Options) (*Client, error) {
+	ip := opts.ip
+	if len(ip) == 0 {
+		ip = "localhost"
+	}
+
 	return &Client{
-		baseURL: fmt.Sprintf("%s://%s:%d", controlScheme, opts.ip, opts.port),
+		baseURL: fmt.Sprintf("%s://%s:%d", controlScheme, ip, opts.port),
 		ctx:     ctx,
 		inner:   &http.Client{},
 		logger:  logger,
@@ -88,7 +94,7 @@ func (c *Client) doDelete(relativePath string) error {
 		return err
 	}
 
-	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		err := fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 		c.logger.WithField("body", buf.String()).WithError(err).Error("unexpected status code")
 		return err
@@ -155,7 +161,7 @@ func (c *Client) Unload(streamUUIDs []uuid.UUID) error {
 	errs := make([]error, 0, len(streamUUIDs))
 	for _, streamUUID := range streamUUIDs {
 		streamIDStr := base64.StdEncoding.EncodeToString(streamUUID[:])
-		if err := c.doDelete(fmt.Sprintf("/stream?stream_uuid=%s", streamIDStr)); err != nil {
+		if err := c.doDelete(fmt.Sprintf("/stream?stream_uuid=%s", url.PathEscape(streamIDStr))); err != nil {
 			err = fmt.Errorf("failed to delete stream ID association %s: %w", streamUUID.String(), err)
 			errs = append(errs, err)
 			continue

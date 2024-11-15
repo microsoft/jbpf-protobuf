@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns the decoder commands
+// Command returns the input commands
 func Command(opts *common.GeneralOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "input",

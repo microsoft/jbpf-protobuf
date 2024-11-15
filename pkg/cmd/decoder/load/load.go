@@ -18,22 +18,20 @@ type runOptions struct {
 
 	compiledProtos map[string]*common.File
 	configFiles    []string
-	configs        []common.CodeletsetConfig
+	configs        []*common.CodeletsetConfig
 }
 
 func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 	flags.StringArrayVarP(&opts.configFiles, "config", "c", []string{}, "configuration files to load")
 }
 
-func (o *runOptions) parse() error {
-	configs, compiledProtos, err := common.CodeletsetConfigFromFiles(o.configFiles...)
+func (o *runOptions) parse() (err error) {
+	o.configs, err = common.CodeletsetConfigFromFiles(o.configFiles...)
 	if err != nil {
-		return err
+		return
 	}
-	o.configs = configs
-	o.compiledProtos = compiledProtos
-
-	return nil
+	o.compiledProtos, err = common.LoadCompiledProtos(o.configs, false, true)
+	return
 }
 
 // Command Load a schema to a local decoder
@@ -77,11 +75,14 @@ func run(cmd *cobra.Command, opts *runOptions) error {
 	for _, config := range opts.configs {
 		for _, desc := range config.CodeletDescriptor {
 			for _, io := range desc.OutIOChannel {
-				if existing, ok := schemas[io.Serde.Protobuf.ProtoPackageName]; ok {
+				if existing, ok := schemas[io.Serde.Protobuf.PackageName]; ok {
 					existing.Streams[io.StreamUUID] = io.Serde.Protobuf.MsgName
 				} else {
-					compiledProto := opts.compiledProtos[io.Serde.Protobuf.AbsPackagePath]
-					schemas[io.Serde.Protobuf.ProtoPackageName] = &schema.LoadRequest{
+					compiledProto, ok := opts.compiledProtos[io.Serde.Protobuf.PackagePath]
+					if !ok {
+						return errors.New("compiled proto not found")
+					}
+					schemas[io.Serde.Protobuf.PackageName] = &schema.LoadRequest{
 						CompiledProto: compiledProto.Data,
 						Streams: map[uuid.UUID]string{
 							io.StreamUUID: io.Serde.Protobuf.MsgName,

@@ -28,7 +28,7 @@ type runOptions struct {
 
 	compiledProtos map[string]*common.File
 	configFiles    []string
-	configs        []common.CodeletsetConfig
+	configs        []*common.CodeletsetConfig
 	filePath       string
 	inlineJSON     string
 	payload        string
@@ -46,17 +46,21 @@ func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 func (o *runOptions) parse() (err error) {
 	o.payload, err = loadInlineJSONOrFromFile(o.inlineJSON, o.filePath)
 	if err != nil {
-		return err
+		return
 	}
 
 	o.streamUUID, err = uuid.Parse(o.streamID)
 	if err != nil {
-		return err
+		return
 	}
 
-	o.configs, o.compiledProtos, err = common.CodeletsetConfigFromFiles(o.configFiles...)
+	o.configs, err = common.CodeletsetConfigFromFiles(o.configFiles...)
+	if err != nil {
+		return
+	}
 
-	return err
+	o.compiledProtos, err = common.LoadCompiledProtos(o.configs, true, false)
+	return
 }
 
 // Command Load a schema to a local decoder
@@ -151,13 +155,12 @@ func loadInlineJSONOrFromFile(inlineJSON, filePath string) (string, error) {
 	return inlineJSON, nil
 }
 
-func getMessageInstance(configs []common.CodeletsetConfig, compiledProtos map[string]*common.File, streamUUID uuid.UUID) (*dynamicpb.Message, error) {
+func getMessageInstance(configs []*common.CodeletsetConfig, compiledProtos map[string]*common.File, streamUUID uuid.UUID) (*dynamicpb.Message, error) {
 	for _, config := range configs {
 		for _, desc := range config.CodeletDescriptor {
 			for _, io := range desc.InIOChannel {
-				fmt.Printf("%v == %v = %v\n", io.StreamUUID, streamUUID, io.StreamUUID == streamUUID)
 				if io.StreamUUID == streamUUID {
-					compiledProto := compiledProtos[io.Serde.Protobuf.AbsPackagePath]
+					compiledProto := compiledProtos[io.Serde.Protobuf.PackagePath]
 
 					fds := &descriptorpb.FileDescriptorSet{}
 					if err := proto.Unmarshal(compiledProto.Data, fds); err != nil {

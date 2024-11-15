@@ -21,21 +21,16 @@ type runOptions struct {
 	general    *common.GeneralOptions
 
 	configFiles []string
-	configs     []common.CodeletsetConfig
+	configs     []*common.CodeletsetConfig
 }
 
 func addToFlags(flags *pflag.FlagSet, opts *runOptions) {
 	flags.StringArrayVarP(&opts.configFiles, "config", "c", []string{}, "configuration files to unload")
 }
 
-func (o *runOptions) parse() error {
-	configs, _, err := common.CodeletsetConfigFromFiles(o.configFiles...)
-	if err != nil {
-		return err
-	}
-	o.configs = configs
-
-	return nil
+func (o *runOptions) parse() (err error) {
+	o.configs, err = common.CodeletsetConfigFromFiles(o.configFiles...)
+	return
 }
 
 // Command Unload a schema from a local decoder
