@@ -8,7 +8,7 @@ For complete details of each subcommand, see `./jbpf_protobuf_cli {SUBCOMMAND} -
 
 ## Serde
 
-The `serde` subcommand generates assets from protobuf specs which can integrate with `jbpf`'s [serde functionality](../jbpf/docs/serde.md).
+The `serde` subcommand generates assets from protobuf specs which can integrate with `jbpf`'s [serde functionality](https://github.com/microsoft/jbpf/blob/main/docs/serde.md).
 
 Developers must write `.proto` file(s) defining the models that are to be serialized. Additionally they must provide [generator options](https://jpa.kapsi.fi/nanopb/docs/reference.html#generator-options) as defined by nanopb to ensure generated structs can be defined in C as contiguous memory structs.
 

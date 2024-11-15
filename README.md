@@ -10,6 +10,7 @@ Prerequisites:
 * Make
 * Pip
 * Python3
+* Protocol Buffer Compiler (protoc)
 
 The project utilizes [Nanopb](https://github.com/nanopb/nanopb) to generate C structures for given protobuf specs that use contiguous memory. It also generates serializer libraries that can be provided to jbpf, to encode output and decode input data to seamlessly integrate external data processing systems.
 
@@ -18,6 +19,9 @@ The project utilizes [Nanopb](https://github.com/nanopb/nanopb) to generate C st
 ```sh
 # init submodules:
 ./init_submodules.sh
+
+# Install nanopb pip packages:
+python3 -m pip install -r 3p/nanopb/requirements.txt
 
 # source environment variables
 source ./setup_jbpfp_env.sh
