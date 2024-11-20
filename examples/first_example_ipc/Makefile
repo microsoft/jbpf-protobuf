@@ -10,7 +10,7 @@ CLANG_FORMAT_BIN ?= clang-format
 AGENT_NAME := example_app
 PRIMARY_NAME := example_collect_control
 CODELET_NAME := example_codelet.o
-INCLUDES := -I${JBPF_OUT_DIR}/inc -I${JBPF_PATH}/src/common -I${NANO_PB} -I${JBPF_PATH}/src/common -I${JBPF_PATH}/src/core -I${JBPF_PATH}/src/io -I${JBPF_PATH}/src/mem_mgmt -I${JBPF_PATH}/src/lcm -I${JBPF_PATH}/3p/ck/include -I${JBPF_PATH}/3p/ck -DJBPF_EXPERIMENTAL_FEATURES=on
+INCLUDES := -I${JBPF_OUT_DIR}/inc -I${JBPF_PATH}/src/common -I${NANO_PB} -DJBPF_EXPERIMENTAL_FEATURES=on
 AGENT_LDFLAGS := -L${JBPF_OUT_DIR}/lib -ljbpf -lck -lubpf -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
 PRIMARY_LDFLAGS := -L${JBPF_OUT_DIR}/lib -ljbpf_io -lck -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
 AGENT_FILE := example_app.cpp
