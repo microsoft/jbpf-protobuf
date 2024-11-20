@@ -19,7 +19,10 @@ CODELET_CFLAGS := -O2 -target bpf -Wall -DJBPF_DEBUG_ENABLED -D__x86_64__
 
 .PHONY: all clean
 
-all: clean schema codelet agent
+all: clang-format clean schema codelet agent
+
+clang-format:
+	clang-format --style=file --dry-run --Werror ${AGENT_FILE} ${CODELET_FILE}
 
 codelet: ${CODELET_FILE}
 	${CODELET_CC} ${CODELET_CFLAGS} ${INCLUDES} -c ${CODELET_FILE} -o ${CODELET_NAME}
