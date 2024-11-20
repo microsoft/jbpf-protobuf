@@ -29,7 +29,6 @@ SEC("jbpf_generic")
 uint64_t
 jbpf_main(void* state)
 {
-
     void* c;
     int cnt;
     struct jbpf_generic_ctx* ctx;

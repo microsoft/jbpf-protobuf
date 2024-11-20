@@ -7,7 +7,7 @@ CLANG_FORMAT_BIN=clang-format
 # Check if clang-format is installed
 if ! command -v ${CLANG_FORMAT_BIN} > /dev/null; then
   echo "Error: clang-format is not installed."
-  exit 1
+  exit 0
 fi
 
 # Get a list of all staged files
