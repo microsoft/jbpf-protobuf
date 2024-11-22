@@ -27,16 +27,32 @@ jobs:
           source ./setup_jbpfp_env.sh
           make -C pkg          
 
-      # Step 3: Build jbpf
+      # Step 3: Install dependencies
+      - name: Install dependencies (jbpf)
+        run: |
+          sudo apt-get update --fix-missing
+          sudo apt-get install -y cmake make g++
+          export CLANG_FORMAT_CHECK=1
+          export CPP_CHECK=1
+          sudo apt install -y cmake build-essential libboost-dev git libboost-program-options-dev \
+              wget gcovr doxygen libboost-filesystem-dev libasan6 python3
+          sudo apt install -y clang-format cppcheck
+          sudo apt install -y clang gcc-multilib
+          sudo apt install -y libyaml-cpp-dev          
+
+      # Step 4: Build jbpf
       - name: Build Jbpf
         run: |
           mkdir -p jbpf/build
-          cd jbpf/build
+          cd jbpf
+          ./init_and_patch_submodules.sh
+          source setup_jbpf_env.sh
+          cd build
           cmake .. -DJBPF_EXPERIMENTAL_FEATURES=on
           make -j
           cd ../..
 
-      # Step 4: Build examples/first_example_ipc
+      # Step 5: Build examples/first_example_ipc
       - name: Build examples/first_example_standalone
         run: |
           cd examples/first_example_standalone
