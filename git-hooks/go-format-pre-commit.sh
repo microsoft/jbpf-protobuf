@@ -32,9 +32,8 @@ fi
 # Check the formatting of each staged file
 FORMAT_ERRORS=0
 for FILE in ${STAGED_FILES}; do
-  echo "Checking formatting of: ${FILE} ..."
-  DIFF=$(${GOFMT_BIN} -l "${FILE}")
-  if [ -n "$DIFF" ]; then
+  echo "Checking formatting of: ${FILE} ..."  
+  if ! ${GOFMT_BIN} -l "${FILE}"; then
     echo "Error: ${FILE} is not formatted correctly."
     FORMAT_ERRORS=1
   fi

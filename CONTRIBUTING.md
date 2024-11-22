@@ -27,6 +27,12 @@ clang-format -i path/to/your/file.cpp
 
 It is recommended to install the [Clang-Format extension](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format) in Visual Studio Code to format your code automatically.
 
+For go code, we follow the standard Go formatting guidelines. You can format your code using the `gofmt` tool:
+
+```sh
+gofmt -w path/to/your/file.go
+```
+
 ## Commit Messages
 
 Please follow these guidelines for commit messages:
@@ -83,3 +89,4 @@ In your pull request, please include:
 - [Clang-Format Documentation](https://clang.llvm.org/docs/ClangFormat.html)
 - [GitHub Guides: Forking Projects](https://guides.github.com/activities/forking/)
 - [Pre-commit Documentation](https://pre-commit.com/)
+- [Go Formatting Guidelines](https://golang.org/doc/effective_go.html#formatting)
