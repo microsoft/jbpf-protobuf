@@ -28,7 +28,6 @@ type ServerOptions struct {
 func AddServerOptionsToFlags(flags *pflag.FlagSet, opts *ServerOptions) {
 	if opts == nil 
 	
-	
 	{
 		return
 	}
