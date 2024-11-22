@@ -1,0 +1,44 @@
+# .github/workflows/ubuntu2204.yaml
+name: Ubuntu 22.04
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt-get update --fix-missing
+          ./init_submodules.sh
+          python3 -m pip install -r 3p/nanopb/requirements.txt
+          source ./setup_jbpfp_env.sh
+          make -C pkg          
+
+      # Step 3: Build jbpf
+      - name: Build Jbpf
+        run: |
+          mkdir -p jbpf/build
+          cd jbpf/build
+          cmake .. -DJBPF_EXPERIMENTAL_FEATURES=on
+          make -j
+          cd ../..
+
+      # Step 4: Build examples/first_example_ipc
+      - name: Build examples/first_example_standalone
+        run: |
+          cd examples/first_example_standalone
+          source ../../setup_jbpfp_env.sh
+          make
