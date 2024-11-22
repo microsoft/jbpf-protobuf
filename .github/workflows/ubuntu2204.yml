@@ -24,8 +24,11 @@ jobs:
           sudo apt-get update --fix-missing
           ./init_submodules.sh
           python3 -m pip install -r 3p/nanopb/requirements.txt
+
+      - name: Build pkg
+        run: |
           source ./setup_jbpfp_env.sh
-          make -C pkg          
+          make -C pkg
 
       # Step 3: Install dependencies
       - name: Install dependencies (jbpf)
@@ -52,9 +55,16 @@ jobs:
           make -j
           cd ../..
 
-      # Step 5: Build examples/first_example_ipc
+      # Step 5: Build examples/first_example_standalone
       - name: Build examples/first_example_standalone
         run: |
           cd examples/first_example_standalone
+          source ../../setup_jbpfp_env.sh
+          make
+
+      # Step 6: Build examples/first_example_ipc
+      - name: Build examples/first_example_ipc
+        run: |
+          cd examples/first_example_ipc
           source ../../setup_jbpfp_env.sh
           make
