@@ -12,3 +12,9 @@ repos:
         entry: ./git-hooks/check-commit-message.sh
         language: script
         stages: [commit-msg]
+    -   id: go-format
+        name: go-format
+        entry: ./git-hooks/go-format-pre-commit.sh
+        language: system
+        files: \.(go)$
+        stages: [commit]
