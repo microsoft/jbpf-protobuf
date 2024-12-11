@@ -6,6 +6,7 @@ else ifeq ($(BUILD_TYPE),AddressSanitizer)
 	DEBUG_CFLAGS = -fsanitize=address
 endif
 
+CLANG_FORMAT_BIN ?= clang-format
 AGENT_NAME := example_app
 CODELET_NAME := example_codelet.o
 INCLUDES := -I${JBPF_OUT_DIR}/inc -I${NANO_PB} -DJBPF_EXPERIMENTAL_FEATURES=on
@@ -19,7 +20,15 @@ CODELET_CFLAGS := -O2 -target bpf -Wall -DJBPF_DEBUG_ENABLED -D__x86_64__
 
 .PHONY: all clean
 
-all: clean schema codelet agent
+all: clang-format clean schema codelet agent
+
+clang-format:
+	@if command -v ${CLANG_FORMAT_BIN} > /dev/null; then \
+		echo "Running clang-format check..."; \
+		${CLANG_FORMAT_BIN} --style=file --dry-run --Werror ${AGENT_FILE} ${CODELET_FILE}; \
+	else \
+		echo "clang-format not found, skipping..."; \
+	fi
 
 codelet: ${CODELET_FILE}
 	${CODELET_CC} ${CODELET_CFLAGS} ${INCLUDES} -c ${CODELET_FILE} -o ${CODELET_NAME}
