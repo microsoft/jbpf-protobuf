@@ -13,6 +13,7 @@ execute_process(
     ERROR_VARIABLE error
 )
 
+set(JBPF_EXPERIMENTAL_FEATURES ON CACHE BOOL "Enable jbpf experimental features" FORCE)
 add_subdirectory(jbpf)
 
 if (NOT PROJECT_IS_TOP_LEVEL)
