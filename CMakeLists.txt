@@ -13,7 +13,7 @@ set(ENV{JBPFP_OUT_DIR} ${OUTPUT_DIR})
 # Execute the setup script first
 option(INITIALIZE_SUBMODULES "Initialize submodules" ON)
 if(INITIALIZE_SUBMODULES)
-    message(STATUS "Running the optional process")
+    message(STATUS "Initializing submodules")
     execute_process(
         COMMAND bash ./init_submodules.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

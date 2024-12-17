@@ -18,6 +18,7 @@ RUN apt -y install protobuf-compiler python3-pip curl
 RUN wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
 RUN tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
 ENV PATH="$PATH:/root/go/bin:/usr/local/go/bin"
+RUN go env -w GOFLAGS=-buildvcs=false
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /root/go/bin v1.60.3
 
 # Set the working directory and copy the project files
@@ -25,7 +26,3 @@ WORKDIR /jbpf-protobuf
 COPY . /jbpf-protobuf
 
 RUN pip3 install -r /jbpf-protobuf/3p/nanopb/requirements.txt
-WORKDIR /jbpf-protobuf/build
-RUN cmake .. && make -j
-
-ENTRYPOINT [ "/jbpf-protobuf/out/bin/jbpf_protobuf_cli" ]

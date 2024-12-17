@@ -17,9 +17,6 @@ The project utilizes [Nanopb](https://github.com/nanopb/nanopb) to generate C st
 # Getting started
 
 ```sh
-# init submodules:
-./init_submodules.sh
-
 # Install nanopb pip packages:
 python3 -m pip install -r 3p/nanopb/requirements.txt
 
@@ -37,9 +34,19 @@ Alternatively, build using a container:
 # init submodules:
 ./init_submodules.sh
 
-# see ./deploy directory for currently supported OS versions. e.g.
-#   OS=mariner
+# Create builder image with all dependencies loaded
+OS=mariner # see ./deploy directory for currently supported OS versions
 docker build -t jbpfp-$OS:latest -f deploy/$OS.Dockerfile .
+
+# Build the cli and dependencies
+docker run --rm -it \
+  --entrypoint /bin/bash \
+  -v $(pwd):/jbpf-protobuf \
+  -w /jbpf-protobuf/build \
+    jbpfp-$OS:latest -c '
+      source ../setup_jbpfp_env.sh
+      cmake -DINITIALIZE_SUBMODULES=off .. && make -j
+    '
 ```
 
 ## Running the examples
