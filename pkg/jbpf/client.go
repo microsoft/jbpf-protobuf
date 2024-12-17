@@ -31,7 +31,12 @@ func NewClient(logger *logrus.Logger, opts *Options) (*Client, error) {
 }
 
 func (c *Client) connect() error {
-	conn, err := net.Dial(scheme, fmt.Sprintf("%s:%d", c.opts.ip, c.opts.port))
+	ip := c.opts.ip
+	if len(ip) == 0 {
+		ip = "localhost"
+	}
+
+	conn, err := net.Dial(scheme, fmt.Sprintf("%s:%d", ip, c.opts.port))
 	if err != nil {
 		return err
 	}

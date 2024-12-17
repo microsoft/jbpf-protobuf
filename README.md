@@ -26,8 +26,10 @@ python3 -m pip install -r 3p/nanopb/requirements.txt
 # source environment variables
 source ./setup_jbpfp_env.sh
 
-# build jbpf_protobuf_cli
-make -C pkg
+# build cli and dependencies
+mkdir build
+cd build
+cmake .. && make -j
 ```
 
 Alternatively, build using a container:
@@ -35,22 +37,14 @@ Alternatively, build using a container:
 # init submodules:
 ./init_submodules.sh
 
-docker build -t jbpf_protobuf_builder:latest -f deploy/Dockerfile .
+# see ./deploy directory for currently supported OS versions. e.g.
+#   OS=mariner
+docker build -t jbpfp-$OS:latest -f deploy/$OS.Dockerfile .
 ```
 
 ## Running the examples
 
-In order to run any of the samples, you'll need to build jbpf.
-
-```sh
-mkdir -p jbpf/build
-cd jbpf/build
-cmake .. -DJBPF_EXPERIMENTAL_FEATURES=on
-make -j
-cd ../..
-```
-
-Then follow [these](./examples/first_example_standalone/README.md) steps to run a simple example.
+Once the project is built you can run the sample apps. Follow [these](./examples/first_example_standalone/README.md) steps to run a simple example.
 
 # License
 
