@@ -18,6 +18,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	defaultIPAddr = "localhost"
+)
+
 // Client encapsulates the decoder client
 type Client struct {
 	baseURL string
@@ -30,7 +34,7 @@ type Client struct {
 func NewClient(ctx context.Context, logger *logrus.Logger, opts *Options) (*Client, error) {
 	ip := opts.ip
 	if len(ip) == 0 {
-		ip = "localhost"
+		ip = defaultIPAddr
 	}
 
 	return &Client{

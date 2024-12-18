@@ -1,0 +1,52 @@
+# .github/workflows/workflow.yaml
+name: jbpf-protobuf build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os:
+          - azurelinux
+          - ubuntu20_04
+          - ubuntu22_04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Initialize submodules
+        run: ./init_submodules.sh
+
+      - name: Create image
+        run: docker build -t jbpfp-${{ matrix.os }}:latest -f deploy/${{ matrix.os }}.Dockerfile .
+
+      - name: Build jbpf-protobuf
+        run: |
+          docker run --rm -v $(pwd):/jbpf-protobuf -w /jbpf-protobuf/build jbpfp-${{ matrix.os }}:latest cmake -DINITIALIZE_SUBMODULES=off ..
+          docker run --rm -v $(pwd):/jbpf-protobuf -w /jbpf-protobuf/build jbpfp-${{ matrix.os }}:latest make -j
+
+      - name: Build examples/first_example_standalone
+        working-directory: ./examples/first_example_standalone
+        run: |
+          docker run --rm \
+            -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
+            -w /jbpf-protobuf/examples/first_example_standalone \
+              jbpfp-${{ matrix.os }}:latest make
+
+      - name: Build examples/first_example_ipc
+        working-directory: ./examples/first_example_ipc
+        run: |
+          docker run --rm \
+            -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
+            -w /jbpf-protobuf/examples/first_example_ipc \
+              jbpfp-${{ matrix.os }}:latest make

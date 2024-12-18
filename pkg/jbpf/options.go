@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	defaultIP     = "0.0.0.0"
+	defaultIP     = ""
 	defaultPort   = uint16(20787)
 	optionsPrefix = "jbpf"
 	scheme        = "tcp"

@@ -9,14 +9,14 @@ endif
 AGENT_NAME := example_app
 PRIMARY_NAME := example_collect_control
 CODELET_NAME := example_codelet.o
-INCLUDES := -I${JBPF_OUT_DIR}/inc -I${JBPF_PATH}/src/common -I${NANO_PB} -DJBPF_EXPERIMENTAL_FEATURES=on
-AGENT_LDFLAGS := -L${JBPF_OUT_DIR}/lib -ljbpf -lck -lubpf -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
-PRIMARY_LDFLAGS := -L${JBPF_OUT_DIR}/lib -ljbpf_io -lck -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
+INCLUDES := -I${JBPFP_OUT_DIR}/inc -I${JBPF_PATH}/src/common -I${NANO_PB}
+AGENT_LDFLAGS := -L${JBPFP_OUT_DIR}/lib -ljbpf -lck -lubpf -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
+PRIMARY_LDFLAGS := -L${JBPFP_OUT_DIR}/lib -ljbpf_io -lck -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
 AGENT_FILE := example_app.cpp
 PRIMARY_FILE := example_collect_control.cpp
 CODELET_FILE := example_codelet.c
 CODELET_CC := clang
-JBPF_PROTOBUF_CLI := ${JBPFP_PATH}/pkg/jbpf_protobuf_cli
+JBPF_PROTOBUF_CLI := ${JBPFP_OUT_DIR}/bin/jbpf_protobuf_cli
 
 CODELET_CFLAGS := -O2 -target bpf -Wall -DJBPF_DEBUG_ENABLED -D__x86_64__
 
