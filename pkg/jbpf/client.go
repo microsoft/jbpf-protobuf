@@ -11,6 +11,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	defaultIPAddr = "localhost"
+)
+
 // Client is a TCP socket client
 type Client struct {
 	conn   *net.TCPConn
@@ -33,7 +37,7 @@ func NewClient(logger *logrus.Logger, opts *Options) (*Client, error) {
 func (c *Client) connect() error {
 	ip := c.opts.ip
 	if len(ip) == 0 {
-		ip = "localhost"
+		ip = defaultIPAddr
 	}
 
 	conn, err := net.Dial(scheme, fmt.Sprintf("%s:%d", ip, c.opts.port))
