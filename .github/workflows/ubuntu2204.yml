@@ -1,0 +1,70 @@
+# .github/workflows/ubuntu2204.yaml
+name: Ubuntu 22.04
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt-get update --fix-missing
+          ./init_submodules.sh
+          python3 -m pip install -r 3p/nanopb/requirements.txt
+
+      - name: Build pkg
+        run: |
+          source ./setup_jbpfp_env.sh
+          make -C pkg
+
+      # Step 3: Install dependencies
+      - name: Install dependencies (jbpf)
+        run: |
+          sudo apt-get update --fix-missing
+          sudo apt-get install -y cmake make g++
+          export CLANG_FORMAT_CHECK=1
+          export CPP_CHECK=1
+          sudo apt install -y cmake build-essential libboost-dev git libboost-program-options-dev \
+              wget gcovr doxygen libboost-filesystem-dev libasan6 python3
+          sudo apt install -y clang-format cppcheck
+          sudo apt install -y clang gcc-multilib
+          sudo apt install -y libyaml-cpp-dev          
+
+      # Step 4: Build jbpf
+      - name: Build Jbpf
+        run: |
+          mkdir -p jbpf/build
+          cd jbpf
+          ./init_and_patch_submodules.sh
+          source setup_jbpf_env.sh
+          cd build
+          cmake .. -DJBPF_EXPERIMENTAL_FEATURES=on
+          make -j
+          cd ../..
+
+      # Step 5: Build examples/first_example_standalone
+      - name: Build examples/first_example_standalone
+        run: |
+          cd examples/first_example_standalone
+          source ../../setup_jbpfp_env.sh
+          make
+
+      # Step 6: Build examples/first_example_ipc
+      - name: Build examples/first_example_ipc
+        run: |
+          cd examples/first_example_ipc
+          source ../../setup_jbpfp_env.sh
+          make
