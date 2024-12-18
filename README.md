@@ -35,18 +35,20 @@ Alternatively, build using a container:
 ./init_submodules.sh
 
 # Create builder image with all dependencies loaded
-OS=mariner # see ./deploy directory for currently supported OS versions
+OS=azurelinux # see ./deploy directory for currently supported OS versions
 docker build -t jbpfp-$OS:latest -f deploy/$OS.Dockerfile .
 
 # Build the cli and dependencies
 docker run --rm -it \
-  --entrypoint /bin/bash \
   -v $(pwd):/jbpf-protobuf \
   -w /jbpf-protobuf/build \
-    jbpfp-$OS:latest -c '
-      source ../setup_jbpfp_env.sh
-      cmake -DINITIALIZE_SUBMODULES=off .. && make -j
-    '
+  jbpfp-$OS:latest \
+  cmake -DINITIALIZE_SUBMODULES=off ..
+
+docker run --rm -it \
+  -v $(pwd):/jbpf-protobuf \
+  -w /jbpf-protobuf/build \
+  jbpfp-$OS:latest make -j
 ```
 
 ## Running the examples

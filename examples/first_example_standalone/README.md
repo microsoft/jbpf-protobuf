@@ -93,13 +93,9 @@ The `example_app` should stop printing the periodical messages and should give t
 To build the example from scratch, we run the following commands:
 ```sh
 $ docker run --rm -it \
-  --entrypoint /bin/bash \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      make
-    '
+    jbpfp-$OS:latest make
 ```
 
 This should produce these artifacts:
@@ -114,27 +110,19 @@ This should produce these artifacts:
 To bring up the application, we run the following commands:
 ```sh
 $ docker run --rm -it --net=host \
-  --entrypoint /bin/bash \
   -v /tmp/jbpf:/tmp/jbpf \
   -v /dev/shm:/dev/shm \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      ./run_app.sh
-    '
+    jbpfp-$OS:latest ./run_app.sh
 ```
 
 To start the local decoder:
 ```sh
 $ docker run --rm -it --net=host \
-  --entrypoint /bin/bash \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      ./run_decoder.sh
-    '
+    jbpfp-$OS:latest ./run_decoder.sh
 ```
 
 If successful, we shoud see the following line printed:
@@ -145,14 +133,10 @@ If successful, we shoud see the following line printed:
 To load the codeletset, we run the following commands on a second terminal window:
 ```sh
 $ docker run --rm -it --net=host \
-  --entrypoint /bin/bash \
   -v /tmp/jbpf:/tmp/jbpf \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      ./load.sh
-    '
+    jbpfp-$OS:latest ./load.sh
 ```
 
 If the codeletset was loaded successfully, we should see the following output in the `example_app` window:
@@ -170,14 +154,10 @@ INFO[0010] {"seqNo":7, "value":-7, "name":"instance 7"}  streamUUID=00112233-445
 To send a manual control message to the `example_app`, we run the command:
 ```sh
 $ docker run --rm -it --net=host \
-  --entrypoint /bin/bash \
   -v /tmp/jbpf:/tmp/jbpf \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      ./send_input_msg.sh 101
-    '
+    jbpfp-$OS:latest ./send_input_msg.sh 101
 ```
 
 This should trigger a message in the `example_app`:
@@ -188,14 +168,10 @@ This should trigger a message in the `example_app`:
 To unload the codeletset, we run the command:
 ```sh
 $ docker run --rm -it --net=host \
-  --entrypoint /bin/bash \
   -v /tmp/jbpf:/tmp/jbpf \
-  -v $(pwd):/jbpf-protobuf/examples/first_example_standalone \
+  -v $(dirname $(dirname $(pwd))):/jbpf-protobuf \
   -w /jbpf-protobuf/examples/first_example_standalone \
-    jbpfp-$OS:latest -c '
-      source ../../setup_jbpfp_env.sh
-      ./unload.sh
-    '
+    jbpfp-$OS:latest ./unload.sh
 ```
 
 The `example_app` should stop printing the periodical messages and should give the following output:

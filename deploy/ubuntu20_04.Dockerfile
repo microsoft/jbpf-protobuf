@@ -45,3 +45,5 @@ WORKDIR /jbpf-protobuf
 COPY . /jbpf-protobuf
 
 RUN pip3 install -r /jbpf-protobuf/3p/nanopb/requirements.txt
+
+ENTRYPOINT [ "/jbpf-protobuf/deploy/entrypoint.sh" ]
