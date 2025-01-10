@@ -27,12 +27,11 @@ struct jbpf_load_map_def SEC("maps") counter = {
 
 SEC("jbpf_generic")
 uint64_t
-jbpf_main(void *state)
+jbpf_main(void* state)
 {
-
-    void *c;
+    void* c;
     int cnt;
-    struct jbpf_generic_ctx *ctx;
+    struct jbpf_generic_ctx* ctx;
     packet *p, *p_end;
     packet echo;
     manual_ctrl_event resp = {0};
@@ -44,12 +43,12 @@ jbpf_main(void *state)
     if (!c)
         return 1;
 
-    cnt = *(int *)c;
+    cnt = *(int*)c;
     cnt++;
-    *(uint32_t *)c = cnt;
+    *(uint32_t*)c = cnt;
 
-    p = (packet *)ctx->data;
-    p_end = (packet *)ctx->data_end;
+    p = (packet*)ctx->data;
+    p_end = (packet*)ctx->data_end;
 
     if (p + 1 > p_end)
         return 1;
@@ -58,13 +57,11 @@ jbpf_main(void *state)
 
     // Copy the data that was passed to the codelet to the outmap ringbuffer
     // and send them out.
-    if (jbpf_ringbuf_output(&outmap, &echo, sizeof(echo)) < 0)
-    {
+    if (jbpf_ringbuf_output(&outmap, &echo, sizeof(echo)) < 0) {
         return 1;
     }
 
-    if (jbpf_control_input_receive(&inmap, &resp, sizeof(resp)) == 1)
-    {
+    if (jbpf_control_input_receive(&inmap, &resp, sizeof(resp)) == 1) {
         // Print a debug message. This helper function should NOT be used in production environemtns, due to
         // its performance overhead. The helper function will be ignored, if *jbpf* has been built with the
         // USE_JBPF_PRINTF_HELPER option set to OFF.

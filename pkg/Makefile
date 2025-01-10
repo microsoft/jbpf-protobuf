@@ -6,9 +6,9 @@ TEST_WORKDIR ?= $(shell dirname $(shell pwd))/testdata
 REGENERATE_SNAPSHOT ?= false
 OUT_DIR ?= .
 
-.PHONY : mod clean lint test testclean
+.PHONY : format mod clean lint test testclean
 
-${BINARY_NAME}: clean mod
+${BINARY_NAME}: format clean mod
 	CGO_ENABLED=0 go build --trimpath -o ${OUT_DIR}/${BINARY_NAME} main.go
 
 mod:
@@ -19,6 +19,14 @@ clean:
 
 lint:
 	golangci-lint run
+
+format:
+	@if command -v gofmt > /dev/null; then \
+		echo "Running gofmt check..."; \
+		gofmt -s -d .; \
+	else \
+		echo "gofmt not found, skipping..."; \
+	fi
 
 test:
 	TEST_WORKDIR=${TEST_WORKDIR} \
