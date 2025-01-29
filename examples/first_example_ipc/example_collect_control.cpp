@@ -42,7 +42,7 @@ handle_channel_bufs(
                 std::cerr << "Failed to serialize message. Got return code: " << serialized_size << std::endl;
             }
 
-	    jbpf_io_channel_release_buf(bufs[i]);
+            jbpf_io_channel_release_buf(bufs[i]);
         }
     }
 }
