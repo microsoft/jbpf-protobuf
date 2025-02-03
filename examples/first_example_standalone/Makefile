@@ -9,12 +9,12 @@ endif
 CLANG_FORMAT_BIN ?= clang-format
 AGENT_NAME := example_app
 CODELET_NAME := example_codelet.o
-INCLUDES := -I${JBPF_OUT_DIR}/inc -I${NANO_PB} -DJBPF_EXPERIMENTAL_FEATURES=on
-LDFLAGS := -L${JBPF_OUT_DIR}/lib -ljbpf -lck -lubpf -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
+INCLUDES := -I${JBPFP_OUT_DIR}/inc -I${NANO_PB}
+LDFLAGS := -L${JBPFP_OUT_DIR}/lib -ljbpf -lck -lubpf -lmimalloc -lpthread -ldl -lrt ${DEBUG_LDFLAGS}
 AGENT_FILE := example_app.cpp
 CODELET_FILE := example_codelet.c
 CODELET_CC := clang
-JBPF_PROTOBUF_CLI := ${JBPFP_PATH}/pkg/jbpf_protobuf_cli
+JBPF_PROTOBUF_CLI := ${JBPFP_OUT_DIR}/bin/jbpf_protobuf_cli
 
 CODELET_CFLAGS := -O2 -target bpf -Wall -DJBPF_DEBUG_ENABLED -D__x86_64__
 
