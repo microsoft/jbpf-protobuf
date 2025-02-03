@@ -20,32 +20,33 @@ DECLARE_JBPF_HOOK(
     example,
     struct jbpf_generic_ctx ctx,
     ctx,
-    HOOK_PROTO(packet *p, int ctx_id),
-    HOOK_ASSIGN(ctx.ctx_id = ctx_id; ctx.data = (uint64_t)(void *)p; ctx.data_end = (uint64_t)(void *)(p + 1);))
+    HOOK_PROTO(packet* p, int ctx_id),
+    HOOK_ASSIGN(ctx.ctx_id = ctx_id; ctx.data = (uint64_t)(void*)p; ctx.data_end = (uint64_t)(void*)(p + 1);))
 
 DEFINE_JBPF_HOOK(example)
 
 bool done = false;
 
-void sig_handler(int signo)
+void
+sig_handler(int signo)
 {
     done = true;
 }
 
-int handle_signal()
+int
+handle_signal()
 {
-    if (signal(SIGINT, sig_handler) == SIG_ERR)
-    {
+    if (signal(SIGINT, sig_handler) == SIG_ERR) {
         return 0;
     }
-    if (signal(SIGTERM, sig_handler) == SIG_ERR)
-    {
+    if (signal(SIGTERM, sig_handler) == SIG_ERR) {
         return 0;
     }
     return -1;
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char** argv)
 {
 
     struct jbpf_config jbpf_config = {0};
@@ -65,15 +66,13 @@ int main(int argc, char **argv)
         "%s",
         JBPF_DEFAULT_LCM_SOCKET);
 
-    if (!handle_signal())
-    {
+    if (!handle_signal()) {
         std::cout << "Could not register signal handler" << std::endl;
         return -1;
     }
 
     // Initialize jbpf
-    if (jbpf_init(&jbpf_config) < 0)
-    {
+    if (jbpf_init(&jbpf_config) < 0) {
         return -1;
     }
 
@@ -83,8 +82,7 @@ int main(int argc, char **argv)
     int i = 0;
 
     // Sample application code calling a hook every second
-    while (!done)
-    {
+    while (!done) {
         packet p;
         p.seq_no = i;
         p.value = -i;
