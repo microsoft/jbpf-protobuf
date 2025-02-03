@@ -49,14 +49,14 @@ add_custom_target(${BINARY_NAME}-test ALL
 )
 
 # Add a custom target to run tests
-find_program(GOFMT_LINT_EXECUTABLE gofmt)
+find_program(GOFMT_EXECUTABLE gofmt)
 
-if(NOT GOFMT_LINT_EXECUTABLE)
+if(NOT GOFMT_EXECUTABLE)
     message(FATAL_ERROR "gofmt not found. Please install gofmt.")
 endif()
 
 add_custom_target(${BINARY_NAME}-format
-    COMMAND ${GOFMT_LINT_EXECUTABLE} -s -d .
+    COMMAND ${GOFMT_EXECUTABLE} -s -d .
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Running formatting for jbpf_protobuf_cli"
 )
