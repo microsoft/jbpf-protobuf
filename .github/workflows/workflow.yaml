@@ -30,6 +30,9 @@ jobs:
       - name: Create image
         run: docker build -t jbpfp-${{ matrix.os }}:latest -f deploy/${{ matrix.os }}.Dockerfile .
 
+      - name: Build jbpf-protobuf image
+        run: docker build --build-arg builder_image=jbpfp-${{ matrix.os }} --build-arg builder_image_tag=latest -t jbpf_protobuf_cli:latest - < deploy/jbpf_protobuf_cli.Dockerfile
+
       - name: Build jbpf-protobuf
         run: |
           docker run --rm -v $(pwd):/jbpf-protobuf -w /jbpf-protobuf/build jbpfp-${{ matrix.os }}:latest cmake -DINITIALIZE_SUBMODULES=off ..
