@@ -18,6 +18,7 @@ RUN apt -y install protobuf-compiler python3-pip python3-protobuf python3-grpcio
 ENV PATH="$PATH:/root/go/bin:/usr/local/go/bin:/usr/lib/go-1.23/bin"
 RUN go env -w GOFLAGS=-buildvcs=false
 RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.3
+ENV PATH="/root/go/bin:${PATH}"
 
 # Set the working directory and copy the project files
 WORKDIR /jbpf-protobuf
