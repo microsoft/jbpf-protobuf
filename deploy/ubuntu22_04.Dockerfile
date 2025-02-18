@@ -15,6 +15,8 @@ RUN apt install -y clang gcc-multilib
 RUN apt install -y libyaml-cpp-dev
 
 RUN apt -y install protobuf-compiler python3-pip python3-protobuf python3-grpcio curl golang-1.23 golint
+ENV PATH="$PATH:/root/go/bin:/usr/local/go/bin:/usr/lib/go-1.23/bin"
+
 RUN go env -w GOFLAGS=-buildvcs=false
 
 # Set the working directory and copy the project files
