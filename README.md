@@ -1,4 +1,5 @@
 # jbpf-protobuf
+[![jbpf-protobuf build](https://github.com/microsoft/jbpf-protobuf/actions/workflows/workflow.yaml/badge.svg?branch=main)](https://github.com/microsoft/jbpf-protobuf/actions/workflows/workflow.yaml)
 
 **NOTE: This project uses an experimental feature from jbpf. It is not meant to be used in production environments.**
 
