@@ -18,6 +18,7 @@ jobs:
         os:
           - azurelinux
           - ubuntu22_04
+          - ubuntu24_04
 
     steps:
       - name: Checkout code

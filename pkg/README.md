@@ -1,4 +1,5 @@
 # Introduction
+[![jbpf-protobuf build](https://github.com/microsoft/jbpf-protobuf/actions/workflows/workflow.yaml/badge.svg?branch=main)](https://github.com/microsoft/jbpf-protobuf/actions/workflows/workflow.yaml)
 
 `jbpf_protobuf_cli` is a cli tool to build serialization assets to use protobuf as a content encoding mechanism to send data to and from jbpf.
 
