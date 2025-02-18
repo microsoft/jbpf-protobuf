@@ -3,7 +3,6 @@
 The Dockerfiles in this directory can be split into two categories:
 1. builder images for different operating systems:
   * [azurelinux](./azurelinux.Dockerfile)
-  * [Ubuntu20.04](./ubuntu20_04.Dockerfile)
   * [Ubuntu22.04](./ubuntu22_04.Dockerfile)
 2. Containerized application
   * [jbpf_protobuf_cli](./jbpf_protobuf_cli.Dockerfile) is built from one of the OS images in step 1.
