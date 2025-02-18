@@ -14,17 +14,14 @@ RUN apt install -y clang-format cppcheck
 RUN apt install -y clang gcc-multilib
 RUN apt install -y libyaml-cpp-dev
 
-RUN apt -y install protobuf-compiler python3-pip curl
-RUN wget https://go.dev/dl/go1.23.4.linux-amd64.tar.gz
-RUN tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz
-ENV PATH="$PATH:/root/go/bin:/usr/local/go/bin"
+RUN apt -y install protobuf-compiler python3-pip python3-protobuf python3-grpcio curl golang-1.23
+ENV PATH="$PATH:/root/go/bin:/usr/local/go/bin:/usr/lib/go-1.23/bin"
 RUN go env -w GOFLAGS=-buildvcs=false
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /root/go/bin v1.60.3
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.3
+ENV PATH="/root/go/bin:${PATH}"
 
 # Set the working directory and copy the project files
 WORKDIR /jbpf-protobuf
 COPY . /jbpf-protobuf
-
-RUN pip3 install -r /jbpf-protobuf/3p/nanopb/requirements.txt
 
 ENTRYPOINT [ "/jbpf-protobuf/deploy/entrypoint.sh" ]
