@@ -1,6 +1,6 @@
 module jbpf_protobuf_cli
 
-go 1.23.2
+go 1.18
 
 require (
 	github.com/google/uuid v1.6.0
