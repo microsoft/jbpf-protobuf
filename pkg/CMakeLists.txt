@@ -30,23 +30,25 @@ if(NOT GOLANGCI_LINT_EXECUTABLE)
     message(FATAL_ERROR "golangci-lint not found. Please install golangci-lint.")
 endif()
 
-add_custom_target(${BINARY_NAME}-lint ALL
-    COMMAND ${GOLANGCI_LINT_EXECUTABLE} run
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Running linting for jbpf_protobuf_cli"
-)
+if(BUILD_TESTING)
+    add_custom_target(${BINARY_NAME}-lint ALL
+        COMMAND ${GOLANGCI_LINT_EXECUTABLE} run
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Running linting for jbpf_protobuf_cli"
+    )
 
-# Add a custom target to run tests
-add_custom_target(${BINARY_NAME}-test ALL
-    COMMAND ${CMAKE_COMMAND} -E env
-        TEST_WORKDIR=${TEST_WORKDIR}
-        NANO_PB=${NANO_PB}
-        SNAPSHOT_DIR=${CURRENT_DIR}/__snapshots__
-        REGENERATE_SNAPSHOT=${JBPFPCLI_REGENERATE_SNAPSHOT}
-        ${GO_EXECUTABLE} test -v ./...
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Running tests for jbpf_protobuf_cli"
-)
+    # Add a custom target to run tests
+    add_custom_target(${BINARY_NAME}-test ALL
+        COMMAND ${CMAKE_COMMAND} -E env
+            TEST_WORKDIR=${TEST_WORKDIR}
+            NANO_PB=${NANO_PB}
+            SNAPSHOT_DIR=${CURRENT_DIR}/__snapshots__
+            REGENERATE_SNAPSHOT=${JBPFPCLI_REGENERATE_SNAPSHOT}
+            ${GO_EXECUTABLE} test -v ./...
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Running tests for jbpf_protobuf_cli"
+    )
+endif()
 
 # Add a custom target to run tests
 find_program(GOFMT_EXECUTABLE gofmt)
