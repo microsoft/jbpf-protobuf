@@ -15,9 +15,16 @@ set(NANO_PB ${CMAKE_CURRENT_SOURCE_DIR}/../3p/nanopb)
 set(TEST_WORKDIR ${CMAKE_CURRENT_SOURCE_DIR}/../testdata)
 option(JBPFPCLI_REGENERATE_SNAPSHOT false)
 
+# Check if GOPROXY environment variable is set to "off"
+if(NOT "$ENV{GOPROXY}" STREQUAL "off")
+    set(GO_MOD_TIDY_COMMAND ${GO_EXECUTABLE} mod tidy)
+else()
+    set(GO_MOD_TIDY_COMMAND "")
+endif()
+
 # Add a custom target to build the Go application
 add_custom_target(${BINARY_NAME} ALL
-    COMMAND ${GO_EXECUTABLE} mod tidy
+    COMMAND ${GO_MOD_TIDY_COMMAND}
     COMMAND ${GO_EXECUTABLE} build --trimpath -o ${OUTPUT_DIR}/bin/${BINARY_NAME} main.go
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Building jbpf_protobuf_cli application"

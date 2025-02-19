@@ -12,7 +12,7 @@ The Dockerfiles in this directory can be split into two categories:
 
 ```sh
 # To build for a particular OS, run:
-OS=azurelinux # or Ubuntu22.04, Ubuntu24.04
+OS=azurelinux # or ubuntu22_04, ubuntu24_04
 sudo -E docker build -t jbpfp-$OS:latest -f deploy/$OS.Dockerfile .
 
 # And to create a jbpf_protobuf_cli image from that container, run:
