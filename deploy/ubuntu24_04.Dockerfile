@@ -24,7 +24,7 @@ ENV PATH="/root/go/bin:${PATH}"
 WORKDIR /jbpf-protobuf
 COPY . /jbpf-protobuf
 
-RUN pip3 install -r /jbpf-protobuf/3p/nanopb/requirements.txt
+RUN pip3 install -r /jbpf-protobuf/3p/nanopb/requirements.txt --break-system-packages
 ## TODO: We prefer the following rather than above
 ## But the protobuf 3.20 is a hard requirement which is not available on ubuntu 22.04 through apt.
 ## RUN apt install -y python3-protobuf python3-grpcio
