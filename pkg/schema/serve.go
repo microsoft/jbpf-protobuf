@@ -40,9 +40,8 @@ func (s *Server) serveHTTP(ctx context.Context) error {
 			if err := s.UpsertProtoPackage(r.Context(), &body); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
-			} else {
-				w.WriteHeader(http.StatusOK)
 			}
+			w.WriteHeader(http.StatusOK)
 
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -60,9 +59,8 @@ func (s *Server) serveHTTP(ctx context.Context) error {
 			if err := s.AddStreamToSchemaAssociation(r.Context(), &body); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
-			} else {
-				w.WriteHeader(http.StatusOK)
 			}
+			w.WriteHeader(http.StatusOK)
 
 		case http.MethodDelete:
 			streamUUIDStr := r.URL.Query().Get("stream_uuid")

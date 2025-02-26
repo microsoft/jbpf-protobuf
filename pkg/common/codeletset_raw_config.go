@@ -3,7 +3,7 @@ package common
 import (
 	"fmt"
 
-	"gopkg.in/yaml.v3"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // ProtobufRawConfig represents the configuration for a protobuf message as defined in the yaml config
