@@ -56,6 +56,11 @@ docker run --rm -it \
 
 Once the project is built you can run the sample apps. Follow [these](./examples/first_example_standalone/README.md) steps to run a simple example.
 
+# Related projects
+
+- [jbpf](https://github.com/microsoft/jbpf): Userspace eBPF instrumentation and control framework for deploying control and monitoring functions in a secure manner.
+- [jrt-controller](https://github.com/microsoft/jrt-controller): a real-time controller for network functions instrumented with the *jbpf* framework.
+
 # License
 
 The jbpf framework is licensed under the [MIT license](LICENSE.md).
