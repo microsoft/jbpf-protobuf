@@ -13,11 +13,16 @@ Prerequisites:
 * Python3
 * Protocol Buffer Compiler (protoc)
 
+To see how to install these dependencies in various environments, check the relevant Dockerfiles in the [deploy](./deploy/) folder. 
+
 The project utilizes [Nanopb](https://github.com/nanopb/nanopb) to generate C structures for given protobuf specs that use contiguous memory. It also generates serializer libraries that can be provided to jbpf, to encode output and decode input data to seamlessly integrate external data processing systems.
 
 # Getting started
 
 ```sh
+# Clone submodules:
+./init_submodules.sh
+
 # Install nanopb pip packages:
 python3 -m pip install -r 3p/nanopb/requirements.txt
 
@@ -32,7 +37,7 @@ cmake .. && make -j
 
 Alternatively, build using a container:
 ```sh
-# init submodules:
+# Clone submodules:
 ./init_submodules.sh
 
 # Create builder image with all dependencies loaded
