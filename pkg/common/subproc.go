@@ -20,10 +20,11 @@ func RunSubprocess(ctx context.Context, logger *logrus.Logger, name string, args
 	cmd := exec.CommandContext(ctx, name, args...)
 	cmd.Env = os.Environ()
 	l.Debug("Running subprocess")
-	cmd.Stderr = logger.WithField("channel", "stderr").WriterLevel(logrus.DebugLevel)
+	cmd.Stderr = logger.WithField("channel", "stderr").WriterLevel(logrus.ErrorLevel)
 	cmd.Stdout = logger.WithField("channel", "stdout").WriterLevel(logrus.DebugLevel)
 	if err := cmd.Run(); err != nil {
-		return errors.Join(err, fmt.Errorf("failed to run command"))
+		l.Error(fmt.Errorf("failed to run command: %s with error %s", cmd, err))
+		return errors.Join(err)
 	}
 	l.Debug("Complete subprocess")
 	return nil
