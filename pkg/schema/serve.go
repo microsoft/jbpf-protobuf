@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"os/signal"
 	"strings"
@@ -64,17 +63,10 @@ func (s *Server) serveHTTP(ctx context.Context) error {
 
 		case http.MethodDelete:
 			streamUUIDStr := r.URL.Query().Get("stream_uuid")
-			unescapedStreamUUIDStr, err := url.PathUnescape(streamUUIDStr)
 
+			bs, err := base64.RawURLEncoding.DecodeString(streamUUIDStr)
 			if err != nil {
-				s.logger.WithError(err).Error("failed to unescape stream_uuid")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-
-			bs, err := base64.StdEncoding.DecodeString(unescapedStreamUUIDStr)
-			if err != nil {
-				s.logger.WithError(err).Errorf("failed to decode stream_uuid from %s", unescapedStreamUUIDStr)
+				s.logger.WithError(err).Errorf("failed to decode stream_uuid from %s", streamUUIDStr)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}

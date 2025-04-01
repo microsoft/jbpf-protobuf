@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/google/uuid"
@@ -164,8 +163,9 @@ func (c *Client) SendControl(streamUUID uuid.UUID, jdata string) error {
 func (c *Client) Unload(streamUUIDs []uuid.UUID) error {
 	errs := make([]error, 0, len(streamUUIDs))
 	for _, streamUUID := range streamUUIDs {
-		streamIDStr := base64.StdEncoding.EncodeToString(streamUUID[:])
-		if err := c.doDelete(fmt.Sprintf("/stream?stream_uuid=%s", url.PathEscape(streamIDStr))); err != nil {
+		// using base64.RawURLEncoding to encode the streamUUID to a URL-safe string
+		streamIDStr := base64.RawURLEncoding.EncodeToString(streamUUID[:])
+		if err := c.doDelete(fmt.Sprintf("/stream?stream_uuid=%s", streamIDStr)); err != nil {
 			err = fmt.Errorf("failed to delete stream ID association %s: %w", streamUUID.String(), err)
 			errs = append(errs, err)
 			continue
